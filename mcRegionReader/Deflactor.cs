@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 namespace mcRegionReader
@@ -63,6 +64,26 @@ namespace mcRegionReader
                 }
             }
             return mMemory.ToArray();
+        }
+
+        /// <summary>
+        /// GZip解压
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static byte[] Decompress(byte[] bytes)
+        {
+            using (var compressStream = new MemoryStream(bytes))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        return resultStream.ToArray();
+                    }
+                }
+            }
         }
     }
 }

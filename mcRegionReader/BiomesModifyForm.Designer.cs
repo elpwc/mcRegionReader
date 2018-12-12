@@ -85,9 +85,9 @@
             this.label1.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.Location = new System.Drawing.Point(414, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(178, 270);
+            this.label1.Size = new System.Drawing.Size(88, 270);
             this.label1.TabIndex = 19;
-            this.label1.Text = "id\r\nname\r\nicon\r\ntemperature\r\ncolor\r\nzh_cn\r\nzh_tw\r\nen_us\r\njp";
+            this.label1.Text = "id\r\nname\r\nicon\r\ntempe\r\ncolor\r\nzh_cn\r\nzh_tw\r\nen_us\r\njp";
             // 
             // textBox1
             // 

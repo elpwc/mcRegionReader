@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace mcRegionReader
 {
+    /// <summary>
+    /// 储存一个Biome的数据
+    /// </summary>
     public class Biome
     {
         public Biome() { }
@@ -49,6 +51,22 @@ namespace mcRegionReader
         public string icon = "";
         public double temperature = 0.0;
         public string color = "0";
+
+        public Color GetColor()
+        {
+            if (color=="transparent")
+            {
+                return Color.Transparent;
+            }
+            else if (color == "")
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.FromArgb(NumberTransfer.HexString2Int(color.Substring(0, 2)), NumberTransfer.HexString2Int(color.Substring(2, 2)), NumberTransfer.HexString2Int(color.Substring(4, 2)));
+            }
+        }
 
         public lang langs = new lang();
     }

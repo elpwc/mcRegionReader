@@ -1,131 +1,129 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace mcRegionReader
 {
+    /// <summary>
+    /// NBT标签的数据类型。
+    /// </summary>
+    public enum TagType
+    {
+        TAG_End = 0,
+        TAG_Byte = 1,
+        TAG_Short = 2,
+        TAG_Int = 3,
+        TAG_Long = 4,
+        TAG_Float = 5,
+        TAG_Double = 6,
+        TAG_Byte_Array = 7,
+        TAG_String = 8,
+        TAG_List = 9,
+        TAG_Compound = 10,
+        TAG_Int_Array = 11,
+        TAG_Long_Array = 12
+
+    }
     /// <summary>
     /// 提供对NBT标签的读写方法。
     /// </summary>
     public class Tag
     {
-        /// <summary>
-        /// NBT标签的数据类型。
-        /// </summary>
-        public enum Type
-        {
-            TAG_End=0,
-            TAG_Byte=1,
-            TAG_Short=2,
-            TAG_Int=3,
-            TAG_Long=4,
-            TAG_Float=5,
-            TAG_Double=6,
-            TAG_Byte_Array=7,
-            TAG_String=8,
-            TAG_List=9,
-            TAG_Compound=10,
-            TAG_Int_Array=11,
-            TAG_Long_Array=12
 
-        }
         /// <summary>
         /// 取得对应id的NBT数据类型
         /// </summary>
         /// <param name="index">id</param>
         /// <returns>对应的NBT数据类型</returns>
-        private static Type getTypeByIndex(int index)
+        private static TagType GetTypeByIndex(int index)
         {
-            return (Type)index;
+            return (TagType)index;
            // return (Type)Enum.GetValues(typeof(Type)).GetValue(index);
         }
         /// <summary>
         /// 此NBT标签的数据类型。
         /// </summary>
-        public Type type = Type.TAG_End;
+        public TagType type = TagType.TAG_End;
         /// <summary>
         /// 此NBT标签的名称。
         /// </summary>
         public string name = "";
         /// <summary>
         /// <para>此NBT标签的值</para>
-        /// 若数据类型为<see cref="Type.TAG_Compound"/>或<see cref="Type.TAG_List"/>，则<see cref="value"/>以<see cref="Tag[]"/>数组形式储存。
+        /// 若数据类型为<see cref="TagType.TAG_Compound"/>或<see cref="TagType.TAG_List"/>，则<see cref="value"/>以<see cref="Tag[]"/>数组形式储存。
         /// </summary>
         public object value = null;
         /// <summary>
-        /// <para>若数据类型为<see cref="Type.TAG_List"/>，则此项储存所有子项的统一的数据类型。</para>
-        /// 否则，该项值为<see cref="Type.TAG_End"/>。
+        /// <para>若数据类型为<see cref="TagType.TAG_List"/>，则此项储存所有子项的统一的数据类型。</para>
+        /// 否则，该项值为<see cref="TagType.TAG_End"/>。
         /// </summary>
-        public Type listType = Type.TAG_End;
+        public TagType listType = TagType.TAG_End;
 
-        public Tag(Type type, string name, Tag[] value) : this(type, name, (object)value)
+        public Tag(TagType type, string name, Tag[] value) : this(type, name, (object)value)
         { }
-        public Tag(string name, Type listType) : this(Type.TAG_List, name, listType)
+        public Tag(string name, TagType listType) : this(TagType.TAG_List, name, listType)
         { }
-        public Tag(Type type, string name, object value)
+        public Tag(TagType type, string name, object value)
         {
             switch (type)
             {
-                case Type.TAG_End:
+                case TagType.TAG_End:
                     if (value != null)
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Byte:
+                case TagType.TAG_Byte:
                     if (!(value is byte))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Short:
+                case TagType.TAG_Short:
                     if (!(value is short))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Int:
+                case TagType.TAG_Int:
                     if (!(value is int))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Long:
+                case TagType.TAG_Long:
                     if (!(value is long))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Float:
+                case TagType.TAG_Float:
                     if (!(value is float))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Double:
+                case TagType.TAG_Double:
                     if (!(value is double))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Byte_Array:
+                case TagType.TAG_Byte_Array:
                     if (!(value is byte[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_String:
+                case TagType.TAG_String:
                     if (!(value is string))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_List:
-                    if (value is Type)
+                case TagType.TAG_List:
+                    if (value is TagType)
                     {
-                        this.listType = (Type)value;
+                        this.listType = (TagType)value;
                         value = new Tag[0];
                     }
                     else
@@ -134,22 +132,22 @@ namespace mcRegionReader
                         {
                             throw new Exception("IllegalArgument");
                         }
-                        this.listType = ((Tag[])value)[0].getType();
+                        this.listType = ((Tag[])value)[0].GetTagType();
                     }
                     break;
-                case Type.TAG_Compound:
+                case TagType.TAG_Compound:
                     if (!(value is Tag[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Int_Array:
+                case TagType.TAG_Int_Array:
                     if (!(value is int[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Long_Array:
+                case TagType.TAG_Long_Array:
                     if (!(value is long[]))
                     {
                         throw new Exception("IllegalArgument");
@@ -163,81 +161,81 @@ namespace mcRegionReader
             this.value = value;
         }
 
-        public Type getType()
+        public TagType GetTagType()
         {
             return type;
         }
-        public string getName()
+        public string GetName()
         {
             return name;
         }
-        public object getValue()
+        public object GetValue()
         {
             return value;
         }
 
-        public void setValue(object newValue)
+        public void SetValue(object newValue)
         {
             switch (type)
             {
-                case Type.TAG_End:
+                case TagType.TAG_End:
                     if (value != null)
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Byte:
+                case TagType.TAG_Byte:
                     if (!(value is byte))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Short:
+                case TagType.TAG_Short:
                     if (!(value is short))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Int:
+                case TagType.TAG_Int:
                     if (!(value is int))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Long:
+                case TagType.TAG_Long:
                     if (!(value is long))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Float:
+                case TagType.TAG_Float:
                     if (!(value is float))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Double:
+                case TagType.TAG_Double:
                     if (!(value is double))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Byte_Array:
+                case TagType.TAG_Byte_Array:
                     if (!(value is byte[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_String:
+                case TagType.TAG_String:
                     if (!(value is string))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_List:
-                    if (value is Type)
+                case TagType.TAG_List:
+                    if (value is TagType)
                     {
-                        this.listType = (Type)value;
+                        this.listType = (TagType)value;
                         value = new Tag[0];
                     }
                     else
@@ -246,22 +244,22 @@ namespace mcRegionReader
                         {
                             throw new Exception("IllegalArgument");
                         }
-                        this.listType = ((Tag[])value)[0].getType();
+                        this.listType = ((Tag[])value)[0].GetTagType();
                     }
                     break;
-                case Type.TAG_Compound:
+                case TagType.TAG_Compound:
                     if (!(value is Tag[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Int_Array:
+                case TagType.TAG_Int_Array:
                     if (!(value is int[]))
                     {
                         throw new Exception("IllegalArgument");
                     }
                     break;
-                case Type.TAG_Long_Array:
+                case TagType.TAG_Long_Array:
                     if (!(value is long[]))
                     {
                         throw new Exception("IllegalArgument");
@@ -273,26 +271,26 @@ namespace mcRegionReader
             this.value = newValue;
         }
 
-        public Type getListType()
+        public TagType GetListTagType()
         {
             return listType;
         }
 
-        public void addTag(Tag tag)
+        public void AddTag(Tag tag)
         {
-            if (type != Type.TAG_List && type != Type.TAG_Compound)
+            if (type != TagType.TAG_List && type != TagType.TAG_Compound)
             {
                 throw new Exception("RuntimeException");
             }
             Tag[] subtags = (Tag[])value;
             int index = subtags.Length;
 
-            if (type == Type.TAG_Compound) index--;
-            insertTag(tag, index);
+            if (type == TagType.TAG_Compound) index--;
+            InsertTag(tag, index);
         }
-        public void insertTag(Tag tag, int index)
+        public void InsertTag(Tag tag, int index)
         {
-            if (type != Type.TAG_List && type != Type.TAG_Compound)
+            if (type != TagType.TAG_List && type != TagType.TAG_Compound)
             {
                 throw new Exception("RuntimeException");
             }
@@ -300,7 +298,7 @@ namespace mcRegionReader
             Tag[] subtags = (Tag[])value;
             if (subtags.Length > 0)
             {
-                if (type == Type.TAG_List && tag.getType() != getListType())
+                if (type == TagType.TAG_List && tag.GetTagType() != GetListTagType())
                 {
                     throw new Exception("IllegalArgument");
                 }
@@ -316,9 +314,9 @@ namespace mcRegionReader
             Array.Copy(subtags, index, newValue, index + 1, subtags.Length - index);
             value = newValue;
         }
-        public Tag removeTag(int index)
+        public Tag RemoveTag(int index)
         {
-            if (type != Type.TAG_List && type != Type.TAG_Compound)
+            if (type != TagType.TAG_List && type != TagType.TAG_Compound)
             {
                 throw new Exception("RuntimeException");
             }
@@ -332,9 +330,9 @@ namespace mcRegionReader
             value = newValue;
             return victim;
         }
-        public void removeSubTag(Tag tag)
+        public void RemoveSubTag(Tag tag)
         {
-            if (type != Type.TAG_List && type != Type.TAG_Compound)
+            if (type != TagType.TAG_List && type != TagType.TAG_Compound)
             {
                 throw new Exception("RuntimeException");
             }
@@ -347,25 +345,25 @@ namespace mcRegionReader
             {
                 if (subtags[i] == tag)
                 {
-                    removeTag(i);
+                    RemoveTag(i);
                     return;
                 }
                 else
                 {
-                    if (subtags[i].type == Type.TAG_List || subtags[i].type == Type.TAG_Compound)
+                    if (subtags[i].type == TagType.TAG_List || subtags[i].type == TagType.TAG_Compound)
                     {
-                        subtags[i].removeSubTag(tag);
+                        subtags[i].RemoveSubTag(tag);
                     }
                 }
             }
         }
-        public Tag findTagByName(string name)
+        public Tag FindTagByName(string name)
         {
-            return findNextTagByName(name, null);
+            return FindNextTagByName(name, null);
         }
-        public Tag findNextTagByName(string name, Tag found)
+        public Tag FindNextTagByName(string name, Tag found)
         {
-            if (type != Type.TAG_List && type != Type.TAG_Compound)
+            if (type != TagType.TAG_List && type != TagType.TAG_Compound)
                 return null;
             Tag[] subtags = (Tag[])value;
             foreach (Tag subtag in subtags)
@@ -376,7 +374,7 @@ namespace mcRegionReader
                 }
                 else
                 {
-                    Tag newFound = subtag.findTagByName(name);
+                    Tag newFound = subtag.FindTagByName(name);
                     if (newFound != null)
                     {
                         if (newFound == found)
@@ -393,26 +391,46 @@ namespace mcRegionReader
             return null;
         }
 
-        public static Tag readFrom(Stream st)
+        public int GetSubtagsCount()
+        {
+            switch (type)
+            {
+                case TagType.TAG_Byte_Array:
+                    return ((byte[])GetValue()).Length;
+                case TagType.TAG_Compound:
+                    return ((Tag[])GetValue()).Length;
+                case TagType.TAG_Int_Array:
+                    return ((int[])GetValue()).Length;
+                case TagType.TAG_Long_Array:
+                    return ((long[])GetValue()).Length;
+                case TagType.TAG_List:
+                    return ((Tag[])GetValue()).Length;
+                default:
+                    return 0;
+            }
+        }
+
+
+        public static Tag ReadFrom(Stream st)
         {
             BinaryReader br = new BinaryReader(st);
             byte type = br.ReadByte();
             Tag tag = null;
             if (type == 0)
             {
-                tag = new Tag(Type.TAG_End, null, null);
+                tag = new Tag(TagType.TAG_End, null, null);
             }
-            else if (Enum.GetValues(typeof(Type)).Length > type)
+            else if (Enum.GetValues(typeof(TagType)).Length > type)
             {
                 //string name = readUTF(br);
-                tag = new Tag(getTypeByIndex(type), BinaryJava.readUTF(br), readPayload(br, type));
+                tag = new Tag(GetTypeByIndex(type), BinaryJava.ReadUTF(br), ReadPayload(br, type));
             }
             br.Close();
             return tag;
 
         }
 
-        private static object readPayload(BinaryReader br, byte type)
+        private static object ReadPayload(BinaryReader br, byte type)
         {
             switch (type)
             {
@@ -421,31 +439,31 @@ namespace mcRegionReader
                 case 1:
                     return br.ReadByte();
                 case 2:
-                    return BinaryJava.readShort(br);
+                    return BinaryJava.ReadShort(br);
                 case 3:
-                    return BinaryJava.readInt(br);
+                    return BinaryJava.ReadInt(br);
                 case 4:
-                    return BinaryJava.readLong(br); ;
+                    return BinaryJava.ReadLong(br); ;
                 case 5:
-                    return BinaryJava.readFloat(br);
+                    return BinaryJava.ReadFloat(br);
                 case 6:
-                    return BinaryJava.readDouble(br);
+                    return BinaryJava.ReadDouble(br);
                 case 7:
-                    int length = BinaryJava.readInt(br);
+                    int length = BinaryJava.ReadInt(br);
                     return br.ReadBytes(length);
                 case 8:
-                    return BinaryJava.readUTF(br);
+                    return BinaryJava.ReadUTF(br);
                 case 9:
                     byte lt = br.ReadByte();
-                    int ll = BinaryJava.readInt(br);
+                    int ll = BinaryJava.ReadInt(br);
                     Tag[] lo = new Tag[ll];
                     for (int i = 0; i < ll; i++)
                     {
-                        lo[i] = new Tag(getTypeByIndex(lt), null, readPayload(br, lt));
+                        lo[i] = new Tag(GetTypeByIndex(lt), null, ReadPayload(br, lt));
                     }
                     if (lo.Length == 0)
                     {
-                        return getTypeByIndex(lt);
+                        return GetTypeByIndex(lt);
                     }
                     else
                     {
@@ -460,28 +478,28 @@ namespace mcRegionReader
                         string name = null;
                         if (stt != 0)
                         {
-                            name = BinaryJava.readUTF(br);
+                            name = BinaryJava.ReadUTF(br);
                         }
                         Tag[] newTags = new Tag[tags.Length + 1];
                         Array.Copy(tags, 0, newTags, 0, tags.Length);
-                        newTags[tags.Length] = new Tag(getTypeByIndex(stt), name, readPayload(br, stt));
+                        newTags[tags.Length] = new Tag(GetTypeByIndex(stt), name, ReadPayload(br, stt));
                         tags = newTags;
                     } while (stt != 0);
                     return tags;
                 case 11:
-                    int len = BinaryJava.readInt(br);
+                    int len = BinaryJava.ReadInt(br);
                     int[] ia = new int[len];
                     for (int i = 0; i < len; i++)
                     {
-                        ia[i] = BinaryJava.readInt(br);
+                        ia[i] = BinaryJava.ReadInt(br);
                     }
                     return ia;
                 case 12:
-                    int len_ = BinaryJava.readInt(br);
+                    int len_ = BinaryJava.ReadInt(br);
                     long[] ia_ = new long[len_];
                     for (int i = 0; i < len_; i++)
                     {
-                        ia_[i] = BinaryJava.readLong(br);
+                        ia_[i] = BinaryJava.ReadLong(br);
                     }
                     return ia_;
                 default:
@@ -494,86 +512,86 @@ namespace mcRegionReader
         /// 不要忘了Stream.Close(); !
         /// </summary>
         /// <param name="st"></param>
-        public void writeTo(Stream st)
+        public void WriteTo(Stream st)
         {
             BinaryWriter bw = new BinaryWriter(st);
             bw.Write((byte)Convert.ToInt32(type));
-            if (type!=Type.TAG_End)
+            if (type!=TagType.TAG_End)
             {
-                BinaryJava.writeUTF(bw,name);
-                writePayload(bw);
+                BinaryJava.WriteUTF(bw,name);
+                WritePayload(bw);
             }
         }
 
-        private void writePayload(BinaryWriter bw)
+        private void WritePayload(BinaryWriter bw)
         {
             switch (type)
             {
-                case Type.TAG_End:
+                case TagType.TAG_End:
                     break;
-                case Type.TAG_Byte:
+                case TagType.TAG_Byte:
                     bw.Write((byte)value);
                     break;
-                case Type.TAG_Short:
-                    BinaryJava.writeShort(bw,(short)value);
+                case TagType.TAG_Short:
+                    BinaryJava.WriteShort(bw,(short)value);
                     break;
-                case Type.TAG_Int:
-                    BinaryJava.writeInt(bw,(int)value);
+                case TagType.TAG_Int:
+                    BinaryJava.WriteInt(bw,(int)value);
                     break;
-                case Type.TAG_Long:
-                    BinaryJava.writeLong(bw, (long)value);
+                case TagType.TAG_Long:
+                    BinaryJava.WriteLong(bw, (long)value);
                     break;
-                case Type.TAG_Float:
-                    BinaryJava.writeFloat(bw, (float)value);
+                case TagType.TAG_Float:
+                    BinaryJava.WriteFloat(bw, (float)value);
                     break;
-                case Type.TAG_Double:
-                    BinaryJava.writeDouble(bw,(double)value);
+                case TagType.TAG_Double:
+                    BinaryJava.WriteDouble(bw,(double)value);
                     break;
-                case Type.TAG_Byte_Array:
+                case TagType.TAG_Byte_Array:
                     byte[] ba = (byte[])value;
-                    BinaryJava.writeInt(bw,ba.Length);
+                    BinaryJava.WriteInt(bw,ba.Length);
                     bw.Write(ba);
                     break;
-                case Type.TAG_String:
-                    BinaryJava.writeUTF(bw, (string)value);
+                case TagType.TAG_String:
+                    BinaryJava.WriteUTF(bw, (string)value);
                     break;
-                case Type.TAG_List:
+                case TagType.TAG_List:
                     Tag[] list = (Tag[])value;
-                    bw.Write((byte)Convert.ToInt32( getListType()));
-                    BinaryJava.writeInt(bw, list.Length);
+                    bw.Write((byte)Convert.ToInt32( GetListTagType()));
+                    BinaryJava.WriteInt(bw, list.Length);
                     foreach (Tag tt in list)
                     {
-                        tt.writePayload(bw);
+                        tt.WritePayload(bw);
                     }
                     break;
-                case Type.TAG_Compound:
+                case TagType.TAG_Compound:
                     Tag[] subtags = (Tag[])value;
                     foreach (Tag st in subtags)
                     {
                         Tag subtag = st;
-                        Type type = subtag.getType();
+                        TagType type = subtag.GetTagType();
                         bw.Write((byte)Convert.ToInt32(type));
-                        if (type!=Type.TAG_End)
+                        if (type!=TagType.TAG_End)
                         {
-                            BinaryJava.writeUTF(bw, (subtag.getName()));
-                            subtag.writePayload(bw);
+                            BinaryJava.WriteUTF(bw, (subtag.GetName()));
+                            subtag.WritePayload(bw);
                         }
                     }
                     break;
-                case Type.TAG_Int_Array:
+                case TagType.TAG_Int_Array:
                     int[] ia = (int[])value;
-                    BinaryJava.writeInt(bw, ia.Length);
+                    BinaryJava.WriteInt(bw, ia.Length);
                     for (int i = 0; i < ia.Length; i++)
                     {
-                        BinaryJava.writeInt(bw, ia[i]);
+                        BinaryJava.WriteInt(bw, ia[i]);
                     }
                     break;
-                case Type.TAG_Long_Array:
+                case TagType.TAG_Long_Array:
                     long[] la = (long[])value;
-                    BinaryJava.writeInt(bw, la.Length);
+                    BinaryJava.WriteInt(bw, la.Length);
                     for (int i = 0; i < la.Length; i++)
                     {
-                        BinaryJava.writeLong(bw, la[i]);
+                        BinaryJava.WriteLong(bw, la[i]);
                     }
                     break;
                 default:

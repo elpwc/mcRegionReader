@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace mcRegionReader
 {
@@ -8,61 +7,37 @@ namespace mcRegionReader
     /// </summary>
     public static class NumberTransfer
     {
+        public static int HexString2Int(string hex)
+        {
+            return Convert.ToInt32(hex, 16);
+        }
+
         public static int HexByteArray2Int(params byte[] hex)
         {
-            return BitConverter.ToInt32(hex.Reverse().ToArray (),0);
-            //string res = "";
-            //foreach (byte eachByte in hex)
-            //{
-            //    res += Convert.ToString(eachByte, 16).PadLeft(2, '0');
-            //}
-            //if (res != "")
-            //{
-            //    return Convert.ToInt32(res, 16);
-            //}
-            //return 0;
-
+            Array.Reverse(hex);
+            return BitConverter.ToInt32(hex,0);
         }
         public static short HexByteArray2Short(params byte[] hex)
         {
-            return BitConverter.ToInt16(hex.Reverse().ToArray(), 0);
-            //string res = "";
-            //foreach (byte eachByte in hex)
-            //{
-            //    res += Convert.ToString(eachByte, 16).PadLeft(2, '0');
-            //}
-            //if (res != "")
-            //{
-            //    return Convert.ToInt16(res, 16);
-            //}
-            //return 0;
-
+            Array.Reverse(hex);
+            return BitConverter.ToInt16(hex, 0);
         }
         public static long HexByteArray2Long(params byte[] hex)
         {
-            return BitConverter.ToInt64(hex.Reverse().ToArray(), 0);
-            //string res = "";
-            //foreach (byte eachByte in hex)
-            //{
-            //    res += Convert.ToString(eachByte, 16).PadLeft(2, '0');
-            //}
-            //if (res != "")
-            //{
-            //    long b= Convert.ToInt64(res, 16);
-            //    return Convert.ToInt64(res, 16);
-            //}
-            //return 0;
-
+            Array.Reverse(hex);
+            return BitConverter.ToInt64(hex, 0);
         }
 
         public static float HexByteArray2Float(params byte[] hex)
         {
-                return BitConverter.ToSingle(hex.Reverse().ToArray(), 0);
+            Array.Reverse(hex);
+            return BitConverter.ToSingle(hex, 0);
         }
 
         public static double HexByteArray2Double(params byte[] hex)
         {
-                return BitConverter.ToDouble(hex.Reverse().ToArray(), 0);
+            Array.Reverse(hex);
+            return BitConverter.ToDouble(hex, 0);
         }
 
 

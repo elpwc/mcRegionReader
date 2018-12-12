@@ -75,15 +75,12 @@ namespace mcRegionReader
         /// <returns></returns>
         public static Image CombineBitmap(Image A, Image B,/* Color Transparent,*/ int x, int y)
         {
-            using (Image res = B)
+            Image res = B;
+            using (Graphics g = Graphics.FromImage(res)) 
             {
-                using (Graphics g = Graphics.FromImage(res))
-                {
-                    g.DrawImage(A, x, y);
-                    g.Dispose();
-                }
-                return res;
+                g.DrawImage(A, x, y);
             }
+            return res;
 
         }
 
