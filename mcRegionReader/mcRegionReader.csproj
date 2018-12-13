@@ -54,8 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryJava.cs" />
-    <Compile Include="Biome.cs" />
-    <Compile Include="Biomes.cs" />
+    <Compile Include="JSONBiome.cs" />
+    <Compile Include="JSONBlock_flattening.cs" />
+    <Compile Include="JsonUtil.cs" />
     <Compile Include="BiomesModifyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +73,7 @@
     </Compile>
     <Compile Include="GlobalVar.cs" />
     <Compile Include="BiomesLangStruct.cs" />
+    <Compile Include="JSONBlock_old.cs" />
     <Compile Include="MyGraphics.cs" />
     <Compile Include="NumberTransfer.cs" />
     <Compile Include="Program.cs" />

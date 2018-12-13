@@ -8,6 +8,8 @@
         /// <summary>
         /// 全部生物群系信息序列
         /// </summary>
-        public static Biome[] biomes= { };
+        public static JSONBiome[] biomes= { };
+        public static JSONBlock_old[] blocks_old = { };
+        public static JSONBlock_flattening[] blocks_flattening = { };
     }
 }

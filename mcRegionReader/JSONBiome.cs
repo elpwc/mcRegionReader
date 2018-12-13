@@ -4,12 +4,12 @@ using System.Drawing;
 namespace mcRegionReader
 {
     /// <summary>
-    /// 储存一个Biome的数据
+    /// 储存一个从JSON文件中直接读出的全部种类Biome的数据，若储存区块中的Biome，请使用<see cref="short[,] biomes=new short[16,16]; "/>储存
     /// </summary>
-    public class Biome
+    public class JSONBiome
     {
-        public Biome() { }
-        public Biome(short id, string name, string icon, double temperature, string color)
+        public JSONBiome() { }
+        public JSONBiome(short id, string name, string icon, double temperature, string color)
         {
             this.id = id;
             this.name = name;
@@ -17,7 +17,7 @@ namespace mcRegionReader
             this.temperature = temperature;
             this.color = color;
         }
-        public Biome(short id, string name, string icon, double temperature, string color,string zh_cn, string zh_tw, string en_us, string jp)
+        public JSONBiome(short id, string name, string icon, double temperature, string color,string zh_cn, string zh_tw, string en_us, string jp)
         {
             this.id = id;
             this.name = name;
@@ -29,7 +29,7 @@ namespace mcRegionReader
             this.langs.en_us = en_us;
             this.langs.jp = jp;
         }
-        public Biome(string id, string name, string icon, string temperature, string color, string zh_cn, string zh_tw, string en_us, string jp)
+        public JSONBiome(string id, string name, string icon, string temperature, string color, string zh_cn, string zh_tw, string en_us, string jp)
         {
             this.id = (byte)Convert.ToInt32(id);
             this.name = name;

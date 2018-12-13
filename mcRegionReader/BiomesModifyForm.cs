@@ -22,15 +22,15 @@ namespace mcRegionReader
         {
 
         }
-        List<Biome> BS = new List<Biome>();
+        List<JSONBiome> BS = new List<JSONBiome>();
         private void button11_Click(object sender, EventArgs e)
         {
             JsonData test = JsonMapper.ToObject(File.ReadAllText(@"data\biomes.json"));
             foreach (JsonData b in test)
             {
-                BS.Add(JsonMapper.ToObject<Biome>(b.ToJson()));
+                BS.Add(JsonMapper.ToObject<JSONBiome>(b.ToJson()));
             }
-            foreach (Biome B in BS)
+            foreach (JSONBiome B in BS)
             {
                 ListViewItem lvt = new ListViewItem(B.id.ToString());
                 lvt.SubItems.Add(new ListViewItem.ListViewSubItem(lvt,B.name));
@@ -55,8 +55,8 @@ namespace mcRegionReader
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Biome remove = new Biome();
-            foreach (Biome B in BS)
+            JSONBiome remove = new JSONBiome();
+            foreach (JSONBiome B in BS)
             {
                 if (B.id.ToString()==textBox1.Text)
                 {
@@ -65,11 +65,11 @@ namespace mcRegionReader
                 }
             }
             BS.Remove(remove);
-            BS.Add(new Biome(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, textBox6.Text, textBox7.Text, textBox8.Text, textBox9.Text));
+            BS.Add(new JSONBiome(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, textBox6.Text, textBox7.Text, textBox8.Text, textBox9.Text));
             BS = BS.OrderBy(s => s.id).ToList();
 
             listView1.Items.Clear();
-            foreach (Biome B in BS)
+            foreach (JSONBiome B in BS)
             {
                 ListViewItem lvt = new ListViewItem(B.id.ToString());
                 lvt.SubItems.Add(new ListViewItem.ListViewSubItem(lvt, B.name));
@@ -106,7 +106,7 @@ namespace mcRegionReader
 
         public bool indexExist(int index)
         {
-            foreach (Biome B in BS)
+            foreach (JSONBiome B in BS)
             {
                 if (B.id==index)
                 {

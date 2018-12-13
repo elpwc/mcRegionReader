@@ -18,8 +18,8 @@ namespace mcRegionReader
         public int regionX = 0;
         public int regionZ = 0;
         public List<RegionFile_Location> locations=new List<RegionFile_Location>();
-        public List<RegionFile_Chunk> chunks=new List<RegionFile_Chunk>();
-        public static RegionFile_Chunk getChunkByLocation(RegionFile_Location location, Stream st)
+        public List<RegionFile_Chunk> chunksData=new List<RegionFile_Chunk>();
+        public static RegionFile_Chunk GetChunkByLocation(RegionFile_Location location, Stream st)
         {
 
             RegionFile_Chunk tempChunk = new RegionFile_Chunk();
@@ -52,7 +52,7 @@ namespace mcRegionReader
         {
             foreach (RegionFile_Location eachLocation in locations)
             {
-                chunks.Add(getChunkByLocation(eachLocation, st));
+                chunksData.Add(GetChunkByLocation(eachLocation, st));
             }
 
         }
@@ -154,7 +154,7 @@ namespace mcRegionReader
             int chunkX = 0, chunkZ = 0;
             int[] regionBiomesValueInt = { };
             byte[] regionBiomesValueByte = { };
-            foreach (RegionFile_Chunk chunk in chunks)
+            foreach (RegionFile_Chunk chunk in chunksData)
             {
                 regionBiomes = chunk.tag.FindTagByName("Level").FindTagByName("Biomes").GetValue();
                 if (regionBiomes is int[])
@@ -181,9 +181,9 @@ namespace mcRegionReader
                         {
                             if (regionBiomesValueInt.Length == 256)
                             {
-                                currentBiome = (int)regionBiomesValueInt[i];
-                                Color tmpcolor = BiomesUtil.GetBiomeById(currentBiome).GetColor();
-                                chunkpic.SetPixel(x, y, BiomesUtil.GetBiomeById(currentBiome).GetColor());
+                                currentBiome = regionBiomesValueInt[i];
+                                Color tmpcolor = JsonUtil.GetBiomeById(currentBiome).GetColor();
+                                chunkpic.SetPixel(x, y, JsonUtil.GetBiomeById(currentBiome).GetColor());
                             }
                         }
                         else if (regionBiomes is byte[])
@@ -191,8 +191,8 @@ namespace mcRegionReader
                             if (regionBiomesValueByte.Length == 256)
                             {
                                 currentBiome = regionBiomesValueByte[i];
-                                Color tmpcolor = BiomesUtil.GetBiomeById(currentBiome).GetColor();
-                                chunkpic.SetPixel(x, y, BiomesUtil.GetBiomeById(currentBiome).GetColor());
+                                Color tmpcolor = JsonUtil.GetBiomeById(currentBiome).GetColor();
+                                chunkpic.SetPixel(x, y, JsonUtil.GetBiomeById(currentBiome).GetColor());
                             }
                         }
                         else
@@ -207,6 +207,40 @@ namespace mcRegionReader
 
             }
             return pic;
+        }
+        public Chunk[,] chunks = new Chunk[32, 32];
+        public void GetChunks()
+        {
+            Chunk chunk = new Chunk();
+            foreach (RegionFile_Chunk eachChunk in chunksData)
+            {
+                chunk = new Chunk();
+                chunk.GetBlocks(eachChunk.tag);
+                chunk.xPos = (int)eachChunk.tag.FindTagByName("Level").FindTagByName("xPos").GetValue();
+                chunk.zPox = (int)eachChunk.tag.FindTagByName("Level").FindTagByName("zPos").GetValue();
+                chunk.x = chunk.xPos - regionX * 32;
+                chunk.z = chunk.zPox - -regionZ * 32;
+                chunks[chunk.xPos, chunk.zPox] = chunk;
+            }
+            
+        }
+        public Image GetMap(int y)
+        {
+            Image respic = new Bitmap(16 * 32, 16 * 32);
+            Image pic = new Bitmap(16,16);
+            for (int x = 0; x < 32; x++)
+            {
+                for (int z = 0; z < 32; z++)
+                {
+                    if (chunks[x, z]!=null)
+                    {
+                        pic = chunks[x, z].GetMap(y);
+                        respic = MyGraphics.CombineBitmap(pic, respic, x * 16, z * 16);
+                    }
+                    
+                }
+            }
+            return respic;
         }
     }
 

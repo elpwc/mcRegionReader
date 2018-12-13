@@ -71,7 +71,7 @@ namespace mcRegionReader
         private void button5_Click(object sender, EventArgs e)
         {
             RF = RegionFile.FromMcaFile(textBox1.Text);
-            a =RF.chunks[0].tag;
+            a =RF.chunksData[0].tag;
             
             treeView1.Nodes.Add(AddToTree(a));
         }
@@ -146,6 +146,7 @@ namespace mcRegionReader
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            InitializeGlobal();
             Size size = JsonMapper.ToObject<Size>(File.ReadAllText(@"images\typeIcon.json"));
             treeView1.ImageList = new ImageList();
             treeView1.ImageList.ImageSize = new Size(18, 25);
@@ -245,10 +246,6 @@ namespace mcRegionReader
             return bytes;
         }
         
-        private void button11_Click(object sender, EventArgs e)
-        {
-            GlobalVar.biomes = BiomesUtil.ReadBiomes();
-        }
 
         private void button12_Click(object sender, EventArgs e)
         {
@@ -304,101 +301,45 @@ namespace mcRegionReader
         
         private void button16_Click(object sender, EventArgs e)
         {
-            short bit_size = 0;
-            List<byte> bytes = new List<byte>();
-            byte bits=0, byte_= 0,shift=0, value = 0;
-            List<short> palette_ids = new List<short>();
-            short bit_index = 0;
-            int invalid = 0;
-            foreach (Tag section in (Tag[])a.FindTagByName("Level").FindTagByName("Sections").GetValue())
-            {
-                //get bit size of palette ids
-                bit_size = (short)Math.Ceiling(Math.Log(section.FindTagByName("Palette").GetSubtagsCount(), 2));
-                bit_size = bit_size < 4 ? (short)4 : bit_size;
-
-                //convert 64-bit BlockState values to bytes in reverse bit order
-                bytes = new List<byte>();
-                for (int word_num = 0; word_num < section.FindTagByName("BlockStates").GetSubtagsCount(); word_num++)
-                {
-                    for (int byte_num = 0; byte_num < 8; byte_num++)
-                    {
-                        bits = BitConverter.GetBytes(((long[])(section.FindTagByName("BlockStates").GetValue()))[word_num])[7 - byte_num];
-                        byte_ = ReverseBits(bits);
-                        bytes.Add(byte_);
-                    }
-                }
-
-                //get palette ids from bytes
-                palette_ids = new List<short>();
-                bit_index = 0;
-                for (int block_num = 0; block_num < 4096; block_num++)
-                {
-                    value = 0;
-                    //get palette id from bits
-                    for (int bit_num = 0; bit_num < bit_size; bit_num++)
-                    {
-                        byte_ = (byte)Math.Floor((double)(bit_index / 8));
-                        shift = (byte)(7 - (bit_index % 8));
-
-                        value <<= -1;
-                        value |= (byte)((bytes[byte_] >> shift) & 1);
-
-                        bit_index++;
-                    }
-
-                    //return value to normal bit order
-                    value = (byte)(ReverseBits(value) >> (8 - bit_size));
-
-                    if (value >= section.FindTagByName("Palette").GetSubtagsCount())
-                    {
-                        value = (byte)(value % section.FindTagByName("Palette").GetSubtagsCount());
-                        invalid++;
-                    }
-
-                    //add type to blocks list
-                    palette_ids.Add(value);
-                }
-                //bytes = null;
-
-                //add section to region map
-                
-
-            }
-
+            chunk1.GetBlocks(a);
 
         }
+        Chunk chunk1 = new Chunk();
 
 
-        public int[] BlockStateDecompress(long[] input, int numberOfValues)
+        private void button18_Click(object sender, EventArgs e)
         {
-            int[] result = new int[numberOfValues];
-            int bitsPerValue = 64 * input.Length / numberOfValues;
-            int inputLongIdx = 0;
-            int inputBitIdx = 0;
-            for (int outputIntIdx = 0; outputIntIdx < result.Length; outputIntIdx++)
-            {
-                for (int outputBitIdx = 0; outputBitIdx < bitsPerValue; outputBitIdx++)
-                {
-                    long value = input[inputLongIdx] & (1L << inputBitIdx);
-                    if (value != 0)
-                    {
-                        value = 1;
-                    }
-                    result[outputIntIdx] = (int)((result[outputIntIdx] | (value << outputBitIdx)) & 0xff);
-                    inputBitIdx++;
-                    if (inputBitIdx > 63)
-                    {
-                        inputLongIdx++;
-                        inputBitIdx = 0;
-                    }
-                }
-            }
-            return result;
+            pictureBox1.BackgroundImage= chunk1.GetMap(trackBar1.Value);
+        }
 
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            pictureBox1.BackgroundImage = chunk1.GetMap(trackBar1.Value);
         }
 
 
+        public void InitializeGlobal()
+        {
+            GlobalVar.biomes = JsonUtil.ReadBiomes();
+            GlobalVar.blocks_old = JsonUtil.ReadBlocks_old();
+            GlobalVar.blocks_flattening = JsonUtil.ReadBlocks_flattening();
+        }
 
+        private void button11_Click(object sender, EventArgs e)
+        {
+
+            pictureBox1.BackgroundImage = RF.GetMap(trackBar2.Value);
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            RF.GetChunks();
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            pictureBox1.BackgroundImage = RF.GetMap(trackBar2.Value);
+        }
     }
 
     
